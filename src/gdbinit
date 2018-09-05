@@ -1,0 +1,6 @@
+tar extended-remote :4242
+load startup.elf
+file startup.elf
+break reset_handler
+cont
+info reg
