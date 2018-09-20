@@ -26,7 +26,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/cm3/nvic.h>
-// #include "clock.h"
+#include "clock.h"
 #include "sdram.h"
 #include "lcd.h"
 
@@ -61,7 +61,7 @@ void
 lcd_draw_pixel(int x, int y, uint16_t color)
 {
 	if ((x >= LCD_WIDTH) || (y >= LCD_HEIGHT)) {
-// 		printf("Draw out of range [%d, %d]\n", x, y);
+		printf("Draw out of range [%d, %d]\n", x, y);
 		while (1);
 	}
 	*(cur_frame + x + y * LCD_WIDTH) = color;
@@ -120,11 +120,7 @@ lcd_command(uint8_t cmd, int delay, int n_args, const uint8_t *args)
 	gpio_set(GPIOC, GPIO2);		/* Turn off chip select */
 	gpio_clear(GPIOD, GPIO13);	/* always reset D/CX */
 	if (delay) {
-            int j = 0;
-            for (j = 0; j < 10000*delay; j++) {
-		__asm("nop");
-	}
-// 		msleep(delay);		/* wait, if called for */
+		msleep(delay);		/* wait, if called for */
 	}
 }
 

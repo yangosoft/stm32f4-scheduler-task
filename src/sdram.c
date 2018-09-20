@@ -25,7 +25,7 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/fsmc.h>
-// #include "clock.h"
+#include "clock.h"
 #include "sdram.h"
 
 #ifndef NULL
@@ -120,14 +120,7 @@ sdram_init(void) {
 	 */
 	sdram_command(SDRAM_BANK2, SDRAM_CLK_CONF, 1, 0);
 	/* sleep at least 100uS */
-        uint32_t j = 0;
-        for(j = 0; j < 0x0FFFF; j++)
-        {
-            
-            __asm("nop");
-        }
-        
-// 	msleep(1);
+	msleep(1);
 /*
 	for (i = 0; i < 1000; i++) {
 		__asm("nop");

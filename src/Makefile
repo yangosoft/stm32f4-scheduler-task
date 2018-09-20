@@ -1,56 +1,52 @@
-TARGET=startup.elf
-OBJ := vector_table.o main.o serial.o timer.o task.o console.o sdram.o lcd.o gfx.o
-LDSCRIPT=startup.ld
+##
+## This file is part of the libopencm3 project.
+##
+## Copyright (C) 2009 Uwe Hermann <uwe@hermann-uwe.de>
+##
+## This library is free software: you can redistribute it and/or modify
+## it under the terms of the GNU Lesser General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This library is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU Lesser General Public License for more details.
+##
+## You should have received a copy of the GNU Lesser General Public License
+## along with this library.  If not, see <http://www.gnu.org/licenses/>.
+##
 
 
-LIBNAME		= opencm3_stm32f4
-OPENCM3_DIR = ../../../../libopencm3
-LIBPATHS := ./libopencm3 ../../../../libopencm3 ../../../../../libopencm3
-OPENCM3_DIR := $(wildcard $(LIBPATHS:=/locm3.sublime-project))
-OPENCM3_DIR := $(firstword $(dir $(OPENCM3_DIR)))
-DEFS		+= -I$(OPENCM3_DIR)/include
+# OBJS = sdram.o clock.o console.o lcd-spi.o
 
-CROSS=arm-none-eabi-
-CFLAGS := -I. $(DEFS) -nostdlib -g -mcpu=cortex-m4 -mthumb -ggdb3 -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Wextra -Wshadow -Wimplicit-function-declaration -Wredundant-decls -Wmissing-prototypes -fno-common -ffunction-sections -fdata-sections  -MD -Wall -Wundef -DSTM32F4
-LDFLAGS := -g  -L$(OPENCM3_DIR)lib -l$(LIBNAME)
-ASMFLAGS := -g -o
+# BINARY = lcd-dma
+# CSTD = -std=gnu99
+
+# we use sin/cos from the library
+LDLIBS += -lm
+
+# LDSCRIPT = ../stm32f429i-discovery.ld
 
 
-TTY := $(shell tty)
-MACH := stm32f4
-CDEV := tty,id=any,path=$(TTY)
+OBJS = sdram.o clock.o lcd.o font-7x12.o gfx.o console.o scheduler.o
+#lcd-serial.o lcd-spi.o font-7x12.o gfx.o console.o
 
-QEMU_FLAGS := -S -gdb tcp::1234 -nographic -kernel
+OPENCM3_DIR = ../libopencm3
 
+BINARY = multithreading
 
+LDSCRIPT = ./stm32f429i-discovery.ld
 
+include ./Makefile.include
 
-all: $(TARGET)
-
-%.o: %.s
-	$(CROSS)as $(ASMFLAGS) $@ $<
-
-%.o: %.c
-	$(CROSS)gcc $(CFLAGS) -c $<
-
-$(TARGET): $(OBJ) $(LDSCRIPT)
-	$(CROSS)ld $(LDFLAGS) -T $(LDSCRIPT) $(OBJ) -l$(LIBNAME) -o $@
-
-clean:
-	$(RM) *.o *.elf
-
-run: $(TARGET)
-	qemu-system-arm -machine $(MACH) $(QEMU_FLAGS) $< -chardev $(CDEV)	
-
-debug: $(TARGET)
-	$(CROSS)gdb -x gdbinit
-	
-	
-# st-util
 # arm-none-eabi-gdb button.elf
 # (gdb) tar extended-remote :4242
 # ...
 # (gdb) load
+# Loading section .text, size 0x458 lma 0x8000000
+# Loading section .data, size 0x8 lma 0x8000458
+# Start address 0x80001c1, load size 1120
 # Transfer rate: 1 KB/sec, 560 bytes/write.
 # (gdb)
 # ...
