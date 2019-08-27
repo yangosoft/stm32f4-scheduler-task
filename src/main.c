@@ -1,5 +1,4 @@
 
-#define STM32F4
 
 #include <task.h>
 #include <stdio.h>
