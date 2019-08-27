@@ -1,5 +1,5 @@
 TARGET=startup.elf
-OBJ := vector_table.o main.o serial.o timer.o task.o console.o sdram.o lcd.o gfx.o
+OBJ := vector_table.o main.o serial.o timer.o task.o console.o sdram.o lcd.o gfx.o fault_handler.o
 LDSCRIPT=startup.ld
 
 
